@@ -17,3 +17,15 @@ export const SignupValidation = z.object({
       message: "Invalid password",
     }),
 });
+
+export const SigninValidation = z.object({
+  email: z.email({
+    pattern: z.regexes.html5Email,
+    message: "Invalid email format. Please enter a valid email address",
+  }),
+  password: z
+    .string()
+    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, {
+      message: "Invalid password",
+    }),
+});
