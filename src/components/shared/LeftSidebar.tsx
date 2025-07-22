@@ -22,7 +22,7 @@ function LeftSidebar() {
       <div className="flex flex-col gap-11">
         <Link to="/" className="flex gap-3 items-center">
           <img
-            src="assets/images/logo.png"
+            src="/assets/images/logo.png"
             alt="logo"
             width={170}
             height={36}
@@ -31,7 +31,7 @@ function LeftSidebar() {
 
         <Link to={`/profile/${user.id}`} className="flex gap-3 items-center">
           <img
-            src={user.imageUrl || "assets/icons/profile-placeholder.svg"}
+            src={user.imageUrl || "/assets/icons/profile-placeholder.svg"}
             alt="Profile-pic"
             className="h-14 w-14 rounded-full"
           />
@@ -75,7 +75,7 @@ function LeftSidebar() {
         className="shad-button_ghost cursor-pointer"
         onClick={() => signout()}
       >
-        <img src="assets/icons/logout.svg" />
+        <img src="/assets/icons/logout.svg" />
         <p className="small-medium lg:base-medium">Logout</p>
       </Button>
     </nav>

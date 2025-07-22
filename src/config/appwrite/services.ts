@@ -8,7 +8,7 @@ import {
   Query,
 } from "appwrite";
 import { appwriteConfig } from "./envs";
-import type { INewUser } from "@/types";
+import type { INewPost, INewUser, IUpdatePost } from "@/types";
 
 const {
   APPWRITE_API_ENDPOINT,
@@ -119,6 +119,295 @@ export async function signOutAccount() {
   try {
     const session = await account.deleteSession("current");
     return session;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function createPost(post: INewPost) {
+  try {
+    // Upload image to storage
+    const uploadedFile = await uploadFile(post.file[0]);
+
+    if (!uploadedFile) throw Error;
+
+    // Get file url
+    const fileUrl = getFileView(uploadedFile?.$id);
+
+    if (!fileUrl) {
+      deleteFile(uploadedFile.$id);
+      throw Error;
+    }
+
+    // Convert tags
+    const tags = post.tags?.replace(/ /g, "").split(",") || [];
+
+    // Save post to DB
+    const newPost = databases.createDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      ID.unique(),
+      {
+        creator: post.userId,
+        caption: post.caption,
+        imageUrl: fileUrl,
+        imageId: uploadedFile.$id,
+        location: post.location,
+        tags: tags,
+      }
+    );
+
+    if (!newPost) {
+      await deleteFile(uploadedFile.$id);
+      throw Error;
+    }
+
+    return newPost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function uploadFile(file: File) {
+  try {
+    const uploadedFile = await storage.createFile(
+      APPWRITE_BUCKET_ID,
+      ID.unique(),
+      file
+    );
+
+    return uploadedFile;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export function getFileView(fileId: string) {
+  try {
+    const fileUrl = storage.getFileView(APPWRITE_BUCKET_ID, fileId);
+    return fileUrl;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteFile(fileId: string) {
+  try {
+    const deletedFile = await storage.deleteFile(APPWRITE_BUCKET_ID, fileId);
+    return deletedFile;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getRecentPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      [Query.orderDesc("$createdAt"), Query.limit(20)]
+    );
+
+    if (!posts) throw Error;
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function likePost(postId: string, likesArray: string[]) {
+  try {
+    const updatedPost = await databases.updateDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      postId,
+      {
+        likes: likesArray,
+      }
+    );
+
+    if (!updatedPost) throw Error;
+
+    return updatedPost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function savePost(postId: string, userId: string) {
+  try {
+    const updatedPost = await databases.createDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_SAVES_COLLECTION_ID,
+      ID.unique(),
+      {
+        user: userId,
+        post: postId,
+      }
+    );
+
+    if (!updatedPost) throw Error;
+
+    return updatedPost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteSavedPost(savedPostId: string) {
+  try {
+    const status = await databases.deleteDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_SAVES_COLLECTION_ID,
+      savedPostId
+    );
+
+    if (!status) throw Error;
+
+    return status;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getPostById(postId: string) {
+  try {
+    const post = await databases.getDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      postId
+    );
+
+    if (!post) throw Error;
+
+    return post;
+  } catch (error) {
+    console.error(error);
+  }
+}
+export async function updatePost(post: IUpdatePost) {
+  const hasFileToUpdate = post.file.length > 0;
+  try {
+    let image = {
+      imageUrl: post.imageUrl,
+      imageId: post.imageId,
+    };
+
+    if (hasFileToUpdate) {
+      // Upload image to storage
+      const uploadedFile = await uploadFile(post.file[0]);
+
+      if (!uploadedFile) throw Error;
+
+      // Get file url
+      const fileUrl = getFileView(uploadedFile?.$id);
+
+      if (!fileUrl) {
+        deleteFile(uploadedFile.$id);
+        throw Error;
+      }
+
+      image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+    }
+
+    // Convert tags
+    const tags = post.tags?.replace(/ /g, "").split(",") || [];
+
+    // Save post to DB
+    const updatedPost = databases.updateDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      post.postId,
+      {
+        caption: post.caption,
+        imageUrl: image.imageUrl,
+        imageId: image.imageId,
+        location: post.location,
+        tags: tags,
+      }
+    );
+
+    if (!updatedPost) {
+      await deleteFile(post.imageId);
+      throw Error;
+    }
+
+    return updatedPost;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deletePost(postId: string, imageId: string) {
+  if (!postId || !imageId) throw Error;
+  try {
+    await databases.deleteDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      postId
+    );
+    return true;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
+  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+
+  if (pageParam) {
+    queries.push(Query.cursorAfter(pageParam.toString()));
+  }
+
+  try {
+    const posts = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      queries
+    );
+
+    if (!queries) throw Error;
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function searchPosts(searchTerm: string) {
+  try {
+    const posts = await databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_POSTS_COLLECTION_ID,
+      [Query.search("caption", searchTerm)]
+    );
+
+    if (!posts) throw Error;
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getUsers(limit?: number) {
+  const queries: any[] = [Query.orderDesc("$createdAt")];
+
+  if (limit) {
+    queries.push(Query.limit(limit));
+  }
+
+  try {
+    const users = databases.listDocuments(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_USERS_COLLECTION_ID,
+      queries
+    );
+
+    if (!users) throw Error;
+
+    return users;
   } catch (error) {
     console.error(error);
   }

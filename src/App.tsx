@@ -7,6 +7,7 @@ import RootLayout from "./root/RootLayout";
 import {
   AllUsers,
   CreatePost,
+  EditPost,
   Explore,
   Home,
   PostDetails,
@@ -15,7 +16,6 @@ import {
   UpdateProfile,
 } from "./root/pages";
 import { Toaster } from "./components/ui/sonner";
-import EditPost from "./root/pages/EditPost";
 
 function App() {
   return (
