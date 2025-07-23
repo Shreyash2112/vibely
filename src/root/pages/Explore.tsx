@@ -39,7 +39,7 @@ function Explore() {
   const shouldShowSearchResult = searchValue !== "";
   const shouldShowPosts =
     !shouldShowSearchResult &&
-    posts.pages.every((item) => item.documents.length == 0);
+    posts.pages.every((item) => item && item.documents.length == 0);
 
   return (
     <div className="explore-container">
@@ -79,7 +79,7 @@ function Explore() {
       </div>
 
       <div className="flex flex-wrap gap-9 w-full max-w-5xl">
-        {shouldShowSearchResult ? (
+        {shouldShowSearchResult && searchedPosts ? (
           <SearchResults
             isSearching={isSearching}
             searchedPosts={searchedPosts}
@@ -88,6 +88,9 @@ function Explore() {
           <p className="text-light-4 mt-10 text-center w-full">End of Posts</p>
         ) : (
           posts.pages.map((item, index) => {
+            if (!item) {
+              return null;
+            }
             return (
               <GridPostList key={`page-${index}`} posts={item.documents} />
             );

@@ -16,6 +16,7 @@ function PostDetails() {
   const { user } = useUserContext();
 
   function handleDeletePost() {
+    if (!post?.imageId || !id) return;
     deletePost({ postId: id, imageId: post?.imageId });
     navigate(-1);
   }
