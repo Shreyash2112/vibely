@@ -1,18 +1,19 @@
 import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
 import { useGetCurrentUser } from "@/config/react-query/services";
+import type { Models } from "appwrite";
 
 function Saved() {
   const { data: currentUser } = useGetCurrentUser();
 
-  const savedPosts = currentUser?.save?.map((savedPost) => {
+  const savedPosts = currentUser?.save?.map((savedPost: Models.Document) => {
     return {
       ...savedPost.post,
       creator: {
         imageUrl: currentUser.imageUrl,
       },
     };
-  });
+  }).reverse();
 
   return (
     <div className="saved-container">

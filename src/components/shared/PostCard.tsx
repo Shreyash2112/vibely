@@ -23,7 +23,7 @@ function PostCard({ post }: PostCardProp) {
                 "/assets/icons/profile-placeholder.svg"
               }
               alt="creator"
-              className="rounded-full w-12 lg:h-12"
+              className="rounded-full w-12 lg:h-12 "
             />
           </Link>
           <div className="flex flex-col">
@@ -65,7 +65,7 @@ function PostCard({ post }: PostCardProp) {
 
         <img
           src={post.imageUrl || "/assets/icons/profile-placeholder.svg"}
-          className="post-card_img"
+          className="post-card_img "
           alt="post"
         />
       </Link>

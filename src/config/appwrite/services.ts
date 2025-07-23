@@ -8,7 +8,7 @@ import {
   Query,
 } from "appwrite";
 import { appwriteConfig } from "./envs";
-import type { INewPost, INewUser, IUpdatePost } from "@/types";
+import type { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 
 const {
   APPWRITE_API_ENDPOINT,
@@ -304,7 +304,7 @@ export async function updatePost(post: IUpdatePost) {
       const fileUrl = getFileView(uploadedFile?.$id);
 
       if (!fileUrl) {
-        deleteFile(uploadedFile.$id);
+        await deleteFile(uploadedFile.$id);
         throw Error;
       }
 
@@ -354,7 +354,7 @@ export async function deletePost(postId: string, imageId: string) {
 }
 
 export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
-  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+  const queries: string[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
 
   if (pageParam) {
     queries.push(Query.cursorAfter(pageParam.toString()));
@@ -392,7 +392,7 @@ export async function searchPosts(searchTerm: string) {
 }
 
 export async function getUsers(limit?: number) {
-  const queries: any[] = [Query.orderDesc("$createdAt")];
+  const queries: string[] = [Query.orderDesc("$createdAt")];
 
   if (limit) {
     queries.push(Query.limit(limit));
@@ -408,6 +408,77 @@ export async function getUsers(limit?: number) {
     if (!users) throw Error;
 
     return users;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function getUserById(userId: string) {
+  try {
+    const user = databases.getDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_USERS_COLLECTION_ID,
+      userId
+    );
+
+    if (!user) throw Error;
+
+    return user;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function updateUser(user: IUpdateUser) {
+  const hasFileToUpdate = user.file.length > 0;
+  try {
+    let image = {
+      imageUrl: user.imageUrl,
+      imageId: user.imageId,
+    };
+
+    if (hasFileToUpdate) {
+      // Upload image to storage
+      const uploadedFile = await uploadFile(user.file[0]);
+
+      if (!uploadedFile) throw Error;
+
+      // Get file url
+      const fileUrl = getFileView(uploadedFile?.$id);
+
+      if (!fileUrl) {
+        await deleteFile(uploadedFile.$id);
+        throw Error;
+      }
+
+      image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+    }
+
+    // Save post to DB
+    const updatedUser = await databases.updateDocument(
+      APPWRITE_DATABASE_ID,
+      APPWRITE_USERS_COLLECTION_ID,
+      user.userId,
+      {
+        name: user.name,
+        bio: user.bio,
+        imageUrl: image.imageUrl,
+        imageId: image.imageId,
+      }
+    );
+
+    if (!updatedUser) {
+      if (hasFileToUpdate) {
+        await deleteFile(image.imageId);
+      }
+      throw Error;
+    }
+
+    if (user.imageId && hasFileToUpdate) {
+      await deleteFile(user.imageId);
+    }
+
+    return updatedUser;
   } catch (error) {
     console.error(error);
   }
