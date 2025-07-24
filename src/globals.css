@@ -133,7 +133,7 @@ layer(base);
 }
 
 @utility tiny-medium {
-  @apply text-[10px] font-medium leading-[140%];
+  @apply text-[12px] font-medium leading-[140%];
 }
 
 @utility invert-white {

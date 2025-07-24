@@ -81,7 +81,7 @@ function SignupForm() {
         </h2>
 
         <p className="text-light-3 small-medium md:base-medium mt-2">
-          To use Pixelin, please enter your details
+          To use Vibely, please enter your details
         </p>
 
         <form
