@@ -41,7 +41,7 @@ function PostDetails() {
                     "/assets/icons/profile-placeholder.svg"
                   }
                   alt="creator"
-                  className="rounded-full w-8 h-8 lg:h-12 lg:w-12"
+                  className="rounded-full w-8 h-8 lg:h-12 lg:w-12 object-cover"
                 />
 
                 <div className="flex flex-col">

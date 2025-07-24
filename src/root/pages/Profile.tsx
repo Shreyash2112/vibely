@@ -65,8 +65,12 @@ function Profile() {
           </div>
         </div>
       </div>
-
-      {currentUser.$id === user.id && (
+      <hr className="border w-full border-dark-4/80" />
+      {currentUser.$id === user.id ? (
+        <div className="flex max-w-5xl w-full">
+          <GridPostList posts={currentUser.posts} showUser={false} />
+        </div>
+      ) : (
         <div className="flex max-w-5xl w-full">
           <GridPostList posts={currentUser.posts} showUser={false} />
         </div>

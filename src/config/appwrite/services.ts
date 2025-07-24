@@ -6,6 +6,7 @@ import {
   Storage,
   ID,
   Query,
+  ImageGravity,
 } from "appwrite";
 import { appwriteConfig } from "./envs";
 import type { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
@@ -184,7 +185,14 @@ export async function uploadFile(file: File) {
 
 export function getFileView(fileId: string) {
   try {
-    const fileUrl = storage.getFileView(APPWRITE_BUCKET_ID, fileId);
+    const fileUrl = storage.getFilePreview(
+      APPWRITE_BUCKET_ID,
+      fileId,
+      2000,
+      2000,
+      ImageGravity.Top,
+      100
+    );
     return fileUrl;
   } catch (error) {
     console.error(error);
@@ -354,7 +362,7 @@ export async function deletePost(postId: string, imageId: string) {
 }
 
 export async function getInfinitePosts({ pageParam }: { pageParam: string }) {
-  const queries: string[] = [Query.orderDesc("$updatedAt"), Query.limit(1)];
+  const queries: string[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
 
   if (pageParam) {
     queries.push(Query.cursorAfter(pageParam.toString()));

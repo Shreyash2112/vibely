@@ -1,126 +1,139 @@
-# Pixelin - Modern Social Media Web Application
+# Vibely - Modern Social Media Web Application
 
 A feature-rich social media platform built with cutting-edge web technologies, designed to provide users with an intuitive and engaging social networking experience.
 
-🚀 Tech Stack
+## 🚀 Tech Stack
 
 **Frontend:**
 
-- **React.js** - Component-based UI library for building interactive user interfaces
-- **TypeScript** - Type-safe JavaScript for enhanced developer experience and code reliability
-- **Tailwind CSS** - Utility-first CSS framework for rapid UI development
-- **shadcn/ui** - Modern, accessible component library built on Radix UI
+- **React.js** – Component-based UI library for building interactive user interfaces
+- **TypeScript** – Type-safe JavaScript for enhanced code reliability
+- **Tailwind CSS** – Utility-first CSS framework for rapid UI development
+- **shadcn/ui** – Modern, accessible component library built on Radix UI
+- **TanStack Query** – Powerful data fetching and caching library for React
+- **Zod** – TypeScript-first schema validation and parsing library
 
 **Backend:**
 
-- **Appwrite** - Open-source Backend-as-a-Service (BaaS) platform providing authentication, database, and storage solutions
+- **Appwrite** – Open-source Backend-as-a-Service platform providing authentication, database, and storage solutions
 
-✨ Features
+## 📦 Installation & Setup (Vite)
+
+### Prerequisites
+
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/en)
+- [npm](https://www.npmjs.com/) (Node Package Manager) or [yarn](https://yarnpkg.com/)
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/Shreyash2112/vibely.git
+cd vibely
+```
+
+### Install Dependencies
+
+Using npm:
+
+```bash
+npm install
+```
+
+Using yarn:
+
+```bash
+yarn
+```
+
+### Environment Configuration
+
+1. Copy the e`env.example` & `.env` file in the root of your project:
+
+```bash
+cp .env.samples .env
+```
+
+2. Update `.env` with your Appwrite credentials. Replace the placeholder values with your actual Appwrite credentials.:
+
+```env
+VITE_APPWRITE_API_ENDPOINT = ";
+VITE_APPWRITE_PROJECT_ID = ";
+VITE_APPWRITE_BUCKET_ID = ";
+VITE_APPWRITE_DATABASE_ID = ";
+VITE_APPWRITE_SAVES_COLLECTION_ID = ";
+VITE_APPWRITE_USERS_COLLECTION_ID = ";
+VITE_APPWRITE_POSTS_COLLECTION_ID = ";
+
+# For development pusrpose only
+VITE_APPWRITE_DEV_KEY = ""
+
+```
+
+## 🚀 Getting Started
+
+### Running the Development Server
+
+```bash
+npm run dev
+```
+
+or
+
+```bash
+yarn dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) to view the app.
+
+### Initial Setup
+
+1. **Sign Up** – Register a new account and complete your profile.
+2. **Create Your First Post** – Share text or images.
+3. **Interact** – Like and save posts from other users.
+4. **Edit Profile** – Update bio, profile picture, and personal info.
+
+### Production Build
+
+```bash
+npm run build
+```
+
+```bash
+npm run preview
+```
+
+## ✨ Features
 
 ### User Management
 
-- **Profile Creation** - Seamless user registration and profile setup
-- **Profile Updates** - Edit personal information, profile pictures, and bio
-- **User Authentication** - Secure login/logout functionality
+- **Profile Creation** – Seamless registration and setup
+- **Profile Updates** – Edit personal details and avatar
+- **Authentication** – Secure login/logout
 
 ### Content Management
 
-- **Create Posts** - Share thoughts, images, and content with the community
-- **Edit Posts** - Modify existing posts with real-time updates
-- **Post Interactions** - Like posts to show appreciation
-- **Save Posts** - Bookmark favorite content for later viewing
+- **Create Posts** – Share thoughts and media
+- **Edit Posts** – Real-time post modifications
+- **Post Interactions** – Like posts to show appreciation
+- **Save Posts** – Bookmark favorite content
 
 ### User Experience
 
-- **Responsive Design** - Optimized for desktop and mobile devices
-- **Modern UI/UX** - Clean, intuitive interface with smooth animations
-- **Type Safety** - TypeScript ensures robust code quality and fewer runtime errors
+- **Responsive Design** – Desktop & mobile optimized
+- **Modern UI/UX** – Clean interface with smooth animations
+- **Type Safety** – Robust code quality with TypeScript
 
-🛠️ Architecture
+## 🛠️ Architecture
 
-The application follows modern web development best practices with:
+- Component-based design with React.js
+- Type-safe development using TypeScript
+- Utility-first styling via Tailwind CSS
+- Accessible components from shadcn/ui
+- Data fetching & caching with TanStack Query
+- Schema validation with Zod
+- Serverless backend powered by Appwrite BaaS
 
-- Component-based architecture using React.js
-- Type-safe development with TypeScript
-- Utility-first styling with Tailwind CSS
-- Pre-built accessible components from shadcn/ui
-- Serverless backend infrastructure with Appwrite BaaS
+## 🎯 Purpose
 
-🎯 Purpose
-
-Pixelin demonstrates the implementation of a full-stack social media application using modern web technologies. It serves as an excellent example of how to integrate frontend frameworks with Backend-as-a-Service solutions to create scalable, maintainable web applications.
-
-Perfect for developers looking to understand modern React patterns, TypeScript integration, and BaaS implementation in real-world applications.
-
-<!-- _
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-``` -->
-
-\_
+Vibely showcases a full-stack social media application that integrates modern frontend frameworks, data fetching patterns, schema validation, and Backend-as-a-Service solutions to deliver a scalable, maintainable web experience for developers exploring advanced React and TypeScript workflows.
